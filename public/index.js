@@ -1,26 +1,26 @@
 const form = document.querySelector("form");
-const nameInput = document.querySelector("#name-input");
+const city_name = document.querySelector("#city-name");
 const countrySelect = document.querySelector("#country-select");
 const countryList = document.querySelector("#country-list");
 
 function handleSubmit(e) {
   e.preventDefault();
 
-  if (nameInput.value < 1) {
+  if (city_name.value < 1) {
     alert("You must enter a city name");
     return;
   }
 
   let userRating = document.querySelector('input[name="rating"]:checked').value;
   let body = {
-    name: nameInput.value,
+    city_name: city_name.value,
     rating: +userRating,
     countryId: +countrySelect.value,
   };
 
-  axios.post("http://localhost:4004/cities", body).then(() => {
+  axios.post("http://localhost:4657/cities", body).then(() => {
     countrySelect.value = 1;
-    nameInput.value = "";
+    city_name.value = "";
     document.querySelector("#rating-one").checked = true;
     getCities();
   });
@@ -28,7 +28,7 @@ function handleSubmit(e) {
 
 function deleteCard(id) {
   axios
-    .delete(`http://localhost:4004/cities/${id}`)
+    .delete(`http://localhost:4657/cities/${id}`)
     .then(() => getCities())
     .catch((err) => console.log(err));
 }
@@ -36,7 +36,7 @@ function deleteCard(id) {
 function getCities() {
   countryList.innerHTML = "";
 
-  axios.get("http://localhost:4004/cities/").then((res) => {
+  axios.get("http://localhost:4657/cities/").then((res) => {
     res.data.forEach((elem) => {
       let countryCard = `<div class="country-card">
                     <h2>${elem.city}, ${elem.country}</h2>
@@ -51,7 +51,7 @@ function getCities() {
 }
 
 function getCountries() {
-  axios.get("http://localhost:4004/countries").then((res) => {
+  axios.get("http://localhost:4657/countries").then((res) => {
     res.data.forEach((country) => {
       const option = document.createElement("option");
       option.setAttribute("value", country["country_id"]);

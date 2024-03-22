@@ -8,23 +8,23 @@ module.exports = {
     sequelize
       .query(
         `
-        drop table if exists cities;
-        drop table if exists countries;
+        DROP TABLE IF EXISTS cities;
+        DROP TABLE IF EXISTS countries;
 
-        create table countries (
-            country_id serial primary key, 
-            name varchar
+        CREATE TABLE countries (
+            country_id SERIAL PRIMARY KEY, 
+            name VARCHAR(50)
         );
 
         CREATE TABLE cities (
           city_id SERIAL PRIMARY KEY, 
-          name VARCHAR(25), 
+          city_name VARCHAR(25), 
           rating INTEGER, 
           country_id INTEGER REFERENCES countries(country_id)
       ); 
 
-        insert into countries (name)
-        values ('Afghanistan'),
+        INSERT INTO countries (name)
+        VALUES ('Afghanistan'),
         ('Albania'),
         ('Algeria'),
         ('Andorra'),
@@ -220,7 +220,7 @@ module.exports = {
         ('Zambia'),
         ('Zimbabwe');
 
-        INSERT INTO cities (name, rating, country_id) VALUES
+        INSERT INTO cities (city_name, rating, country_id) VALUES
       ('New York', 5, 187),
       ('Los Angeles', 4, 187),
       ('Chicago', 4, 187),
@@ -244,9 +244,36 @@ module.exports = {
         `
       )
       .then(() => {
-        console.log("DB seeded!");
+        console.log("DataBase_unit5rw has been seeded successfully!");
         res.sendStatus(200);
       })
       .catch((err) => console.log("error seeding DB", err));
+  },
+  // ********* getCountries *********
+  getCountries: (req, res) => {
+    sequelize
+      .query("SELECT * FROM countries")
+      /**
+       * sequelize.query("SELECT * FROM countries"): This line is executing a raw
+       * SQL query using Sequelize. The query is "SELECT * FROM countries", which
+       * means it's selecting all records from the "countries" table in the database.
+       */
+      .then((dbRes) => {
+        res.status(200).send(dbRes[0]);
+        // console.log("all good to hear. ", dbRes[0]);
+      })
+      /**
+       * .then(([dbRes]) => { ... }): This is a promise that gets resolved once the
+       * query is executed. The result of the query is passed as an argument to the
+       * function inside the then method. The square brackets around dbRes are using
+       * JavaScript's array destructuring to get the first element of the result
+       * array, which contains the result rows.
+       *
+       * res.status(200).send(dbRes[0]);: Inside the function, it's setting the HTTP
+       * status of the response to 200 (which means "OK") and sending the first
+       * record from the query result (dbRes[0]) as the response. If there are no
+       *  records in the "countries" table, it will send undefined.
+       */
+      .catch((err) => console.log("error getting countries", err));
   },
 };
