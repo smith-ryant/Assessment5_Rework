@@ -276,4 +276,23 @@ module.exports = {
        */
       .catch((err) => console.log("error getting countries", err));
   },
+  // ********* getCities *********
+  // Function to get all cities with their corresponding countries from the database
+  getCities: (req, res) => {
+    sequelize
+      .query(
+        `SELECT cities.city_id, cities.city_name as city, cities.rating, countries.name as country
+               FROM cities
+               JOIN countries
+               ON cities.country_id = countries.country_id
+               ORDER BY cities.rating DESC`
+      )
+      .then((dbRes) => {
+        res.status(200).send(dbRes[0]);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send(err);
+      });
+  },
 };
